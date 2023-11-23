@@ -1,16 +1,19 @@
 ﻿using Tasks.API.Interfaces;
+using Tasks.API.Models;
 
 namespace Tasks.API.Services
 {
     public class TaskServices: ITaskServices
     {
-        public TaskServices() { 
-            
+        private ITaskRepository _taskRepository;
+        public TaskServices(ITaskRepository taskRepository) { 
+            _taskRepository = taskRepository;
         }
 
-        public async Task<int> GetTasks()
+        public async Task<List<TaskGET>> GetTasks()
         {
-            var tasks = 
+            var tasks = await _taskRepository.GetTasks();
+            return tasks;
         }
     }
 }

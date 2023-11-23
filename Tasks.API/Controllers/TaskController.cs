@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Tasks.API.Interfaces;
 
 namespace Tasks.API.Controllers
 {
@@ -6,14 +7,17 @@ namespace Tasks.API.Controllers
     [Route("Task")]
     public class TaskController : Controller
     {
-       public TaskController() { 
+        private ITaskServices _taskServices;
+       public TaskController(ITaskServices taskServices) { 
             
+            _taskServices = taskServices;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetTasks()
         {
-            return Ok();
+            var tasks = await _taskServices.GetTasks();
+            return Ok(tasks);
         }
 
         [HttpPost]
@@ -22,14 +26,14 @@ namespace Tasks.API.Controllers
             return Ok();
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteTasks()
+        [HttpPut]
+        public async Task<IActionResult> AlterTasks()
         {
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<IActionResult> AlterTasks()
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTasks()
         {
             return Ok();
         }
