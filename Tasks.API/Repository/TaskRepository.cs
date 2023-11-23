@@ -35,6 +35,17 @@ namespace Tasks.API.Repository
             var tasks = await connection.QueryAsync<TaskGET>(sql);
             return tasks.ToList();
         }
+        public async Task<int> DeleteTask(int IdTask)
+        {
+            const string sql = """
+                DELETE FROM "Tasks"
+                WHERE "IdTask" = @IdTask
+            """;
+
+            await using var connection = new NpgsqlConnection(GetTaskConnectionString());
+            var task = await connection.ExecuteAsync(sql, new { IdTask = IdTask });
+            return task;
+        }
         private string GetTaskConnectionString() =>
         _configuration.GetConnectionString("TaskConnection")!;
     }

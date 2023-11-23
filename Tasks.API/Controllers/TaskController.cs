@@ -32,9 +32,13 @@ namespace Tasks.API.Controllers
             return Ok();
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteTasks()
+        [HttpDelete("{idTask:int}")]
+        public async Task<IActionResult> DeleteTasks(int idTask)
         {
+            if (idTask == 0) 
+                return BadRequest();
+
+            var idDeletedTask = await _taskServices.DeleteTask(idTask);
             return Ok();
         }
     }

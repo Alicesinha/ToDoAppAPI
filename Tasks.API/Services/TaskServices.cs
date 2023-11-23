@@ -15,5 +15,10 @@ namespace Tasks.API.Services
             var tasks = await _taskRepository.GetTasks();
             return tasks;
         }
+        public async Task<int> DeleteTask(int idTask)
+        {
+            var deletedTask = await _taskRepository.DeleteTask(idTask);
+            return deletedTask;
+        }
     }
 }
