@@ -10,15 +10,26 @@ namespace Tasks.API.Services
             _taskRepository = taskRepository;
         }
 
-        public async Task<List<TaskGET>> GetTasks()
+        public async Task<List<TaskGetResult>> GetTasks()
         {
             var tasks = await _taskRepository.GetTasks();
+
+            foreach (var task in tasks)
+            {
+                var subTasks = await _taskRepository.GetSubTasks(task.IdTask);
+                task.SubTask = subTasks;
+            }
             return tasks;
         }
         public async Task<int> InsertTask(InsertTaskDto dto)
         {
             var insertedTask = await _taskRepository.InsertTask(dto);
             return insertedTask;
+        }
+        public async Task<int> InsertSubTask(InsertSubTaskDTO dto, int IdTask)
+        {
+            var insertedSubTask = await _taskRepository.InsertSubtask(dto, IdTask);
+            return insertedSubTask;
         }
         public async Task<int> AlterTask(AlterTaskDto dto)
         {
@@ -28,6 +39,11 @@ namespace Tasks.API.Services
         public async Task<int> DeleteTask(int idTask)
         {
             var deletedTask = await _taskRepository.DeleteTask(idTask);
+            return deletedTask;
+        }
+        public async Task<int> DeleteSubTask(int idSubTask)
+        {
+            var deletedTask = await _taskRepository.DeleteSubTask( idSubTask);
             return deletedTask;
         }
         public async Task<int> AlterTaskStatus(int idTask, int idStatus)

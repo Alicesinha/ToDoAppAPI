@@ -28,6 +28,13 @@ namespace Tasks.API.Controllers
             return Ok(idTask);
         }
 
+        [HttpPost("{idTask:int}/SubTask")]
+        public async Task<IActionResult> InsertSubTasks([FromBody] InsertSubTaskDTO dto, int idTask)
+        {
+            var idSubTask = await _taskServices.InsertSubTask(dto, idTask);
+            return Ok(idSubTask);
+        }
+
         [HttpPut]
         public async Task<IActionResult> AlterTasks([FromBody] AlterTaskDto dto)
         {
@@ -42,6 +49,15 @@ namespace Tasks.API.Controllers
                 return BadRequest();
 
             var idDeletedTask = await _taskServices.DeleteTask(idTask);
+            return Ok();
+        }
+        [HttpDelete("SubTask/{idSubTask:int}")]
+        public async Task<IActionResult> DeleteSubTasks( int idSubTask)
+        {
+            if (idSubTask == 0)
+                return BadRequest();
+
+            var idDeletedTask = await _taskServices.DeleteSubTask( idSubTask);
             return Ok();
         }
         [HttpPut("ChangeStatus/{idTask:int}/{idStatus:int}")]

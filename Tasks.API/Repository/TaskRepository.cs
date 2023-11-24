@@ -14,7 +14,7 @@ namespace Tasks.API.Repository
             _configuration = configuration;
         }
 
-        public async Task<List<TaskGET>> GetTasks()
+        public async Task<List<TaskGetResult>> GetTasks()
         {
             const string sql = """
             SELECT 
@@ -30,9 +30,25 @@ namespace Tasks.API.Repository
             INNER JOIN "TasksStatus" TS ON TS."IdTaskStatus" = T."IdStatus"
             """;
 
-            /*await using var connection = new SqlConnection(GetTaskConnectionString());*/
             await using var connection = new NpgsqlConnection(GetTaskConnectionString());
-            var tasks = await connection.QueryAsync<TaskGET>(sql);
+            var tasks = await connection.QueryAsync<TaskGetResult>(sql);
+            return tasks.ToList();
+        }
+        public async Task<List<SubTaskGetResult>> GetSubTasks(int IdTask)
+        {
+            const string sql = """
+            SELECT 
+                T."IdSubTask", 
+                T."Description",
+                T."CheckDae",
+                T."Check",
+                T."IdTask"
+            FROM "Tasks" T
+            WHERE T."IdTask" = @IdTask
+            """;
+
+            await using var connection = new NpgsqlConnection(GetTaskConnectionString());
+            var tasks = await connection.QueryAsync<SubTaskGetResult>(sql, new {IdTask = IdTask });
             return tasks.ToList();
         }
         public async Task<int> InsertTask(InsertTaskDto dto)
@@ -130,5 +146,46 @@ namespace Tasks.API.Repository
         }
         private string GetTaskConnectionString() =>
         _configuration.GetConnectionString("TaskConnection")!;
+        public async Task<int> InsertSubtask(InsertSubTaskDTO dto, int IdTask)
+        {
+            const string sql = """
+            INSERT INTO "SubTasks"
+            (
+                "Description",
+                "CheckDate",
+                "Check",
+                "IdTask"
+            )
+            VALUES 
+            (
+                @Description,
+                @CheckDate,
+                @Check,
+                @IdTask
+            )
+            RETURNING "IdSubTask"
+            """;
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Description", dto.Description);
+            parameters.Add("@CheckDate", dto.Check == true ? DateTime.Now : null);
+            parameters.Add("@Check", dto.Check);
+            parameters.Add("@IdTask", IdTask);
+
+            await using var connection = new NpgsqlConnection(GetTaskConnectionString());
+            var idTask = await connection.ExecuteAsync(sql, parameters);
+            return idTask;
+        }
+        public async Task<int> DeleteSubTask(int IdSubTask)
+        {
+            const string sql = """
+                DELETE FROM "IdSubTask"
+                WHERE "IdSubTask" = @IdSubTask
+            """;
+
+            await using var connection = new NpgsqlConnection(GetTaskConnectionString());
+            var task = await connection.ExecuteAsync(sql, new { IdSubTask = IdSubTask });
+            return task;
+        }
     }
 }

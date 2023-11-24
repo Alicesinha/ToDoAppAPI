@@ -6,4 +6,9 @@
         public string? Description { get; set; }
         public DateTime DeliveryDate { get; set; }
     }
+    public class InsertSubTaskDTO 
+    { 
+        public string? Description { get; set;}
+        public bool Check { get; set; }
+    }
 }
