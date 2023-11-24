@@ -15,10 +15,32 @@ namespace Tasks.API.Services
             var tasks = await _taskRepository.GetTasks();
             return tasks;
         }
+        public async Task<int> InsertTask(InsertTaskDto dto)
+        {
+            var insertedTask = await _taskRepository.InsertTask(dto);
+            return insertedTask;
+        }
+        public async Task<int> AlterTask(AlterTaskDto dto)
+        {
+            var alteredTask = await _taskRepository.AlterTask(dto);
+            return alteredTask;
+        }
         public async Task<int> DeleteTask(int idTask)
         {
             var deletedTask = await _taskRepository.DeleteTask(idTask);
             return deletedTask;
+        }
+        public async Task<int> AlterTaskStatus(int idTask, int idStatus)
+        {
+            DateTime? FinishDate = null;
+
+            if (idStatus == 3)
+                FinishDate = DateTime.Now;
+
+            var task = await _taskRepository.AlterTaskStatus(idTask, idStatus, FinishDate);
+            if (task <= 0) return 0;
+
+            return task;
         }
     }
 }

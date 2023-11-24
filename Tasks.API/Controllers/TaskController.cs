@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tasks.API.Interfaces;
+using Tasks.API.Models;
 
 namespace Tasks.API.Controllers
 {
@@ -21,15 +22,17 @@ namespace Tasks.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> InsertTasks()
+        public async Task<IActionResult> InsertTasks([FromBody]InsertTaskDto dto)
         {
-            return Ok();
+            var idTask = await _taskServices.InsertTask(dto);
+            return Ok(idTask);
         }
 
         [HttpPut]
-        public async Task<IActionResult> AlterTasks()
+        public async Task<IActionResult> AlterTasks([FromBody] AlterTaskDto dto)
         {
-            return Ok();
+            var idTask = await _taskServices.AlterTask(dto);
+            return Ok(idTask);
         }
 
         [HttpDelete("{idTask:int}")]
@@ -39,6 +42,15 @@ namespace Tasks.API.Controllers
                 return BadRequest();
 
             var idDeletedTask = await _taskServices.DeleteTask(idTask);
+            return Ok();
+        }
+        [HttpPut("ChangeStatus/{idTask:int}/{idStatus:int}")]
+        public async Task<IActionResult> ChangeStatusTask(int idTask, int idStatus)
+        {
+            if (idTask == 0 || idStatus== 0)
+                return BadRequest();
+
+            var taskResult = await _taskServices.AlterTaskStatus(idTask, idStatus);
             return Ok();
         }
     }

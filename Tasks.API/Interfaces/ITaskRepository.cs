@@ -6,5 +6,8 @@ namespace Tasks.API.Interfaces
     {
         Task<List<TaskGET>> GetTasks();
         Task<int> DeleteTask(int IdTask);
+        Task<int> InsertTask(InsertTaskDto dto);
+        Task<int> AlterTask(AlterTaskDto dto);
+        Task<int> AlterTaskStatus(int idTask, int idStatus, DateTime? finishDate);
     }
 }
