@@ -1,0 +1,78 @@
+-- DROP DATABASE IF EXISTS "TaskBD";
+
+CREATE DATABASE "TaskBD"
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Portuguese_Brazil.1252'
+    LC_CTYPE = 'Portuguese_Brazil.1252'
+    LOCALE_PROVIDER = 'libc'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+\c "TaskBD";
+
+-- DROP TABLE IF EXISTS public."TasksStatus";
+
+CREATE TABLE IF NOT EXISTS public."TasksStatus"
+(
+    "IdTaskStatus" integer NOT NULL,
+    description text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "TasksStatus_pkey" PRIMARY KEY ("IdTaskStatus")
+);
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."TasksStatus"
+    OWNER to postgres;
+
+
+
+
+-- DROP TABLE IF EXISTS public."Tasks";
+
+CREATE TABLE IF NOT EXISTS public."Tasks"
+(
+    "IdTask" integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    "Title" text COLLATE pg_catalog."default" NOT NULL,
+    "Description" text COLLATE pg_catalog."default" NOT NULL,
+    "IdStatus" integer NOT NULL,
+    "DeliveryDate" timestamp without time zone,
+    "CreateDate" timestamp without time zone NOT NULL,
+    "FinishDate" timestamp without time zone,
+    CONSTRAINT tasks_pkey PRIMARY KEY ("IdTask"),
+    CONSTRAINT "FK_tasks_idStatus" FOREIGN KEY ("IdStatus")
+        REFERENCES public."TasksStatus" ("IdTaskStatus") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+);
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."Tasks"
+    OWNER to postgres;
+
+
+
+-- DROP TABLE IF EXISTS public."SubTasks";
+
+CREATE TABLE IF NOT EXISTS public."SubTasks"
+(
+    "IdSubTask" integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    "Description" text COLLATE pg_catalog."default" NOT NULL,
+    "CheckDate" date,
+    "Check" boolean NOT NULL,
+    "IdTask" integer NOT NULL,
+    CONSTRAINT "SubTasks_pkey" PRIMARY KEY ("IdSubTask"),
+    CONSTRAINT "FK_subTask_IdTask" FOREIGN KEY ("IdTask")
+        REFERENCES public."Tasks" ("IdTask") MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+);
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public."SubTasks"
+    OWNER to postgres;
