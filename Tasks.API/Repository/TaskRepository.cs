@@ -40,10 +40,10 @@ namespace Tasks.API.Repository
             SELECT 
                 T."IdSubTask", 
                 T."Description",
-                T."CheckDae",
+                T."CheckDate",
                 T."Check",
                 T."IdTask"
-            FROM "Tasks" T
+            FROM "SubTasks" T
             WHERE T."IdTask" = @IdTask
             """;
 
@@ -179,7 +179,7 @@ namespace Tasks.API.Repository
         public async Task<int> DeleteSubTask(int IdSubTask)
         {
             const string sql = """
-                DELETE FROM "IdSubTask"
+                DELETE FROM "SubTasks"
                 WHERE "IdSubTask" = @IdSubTask
             """;
 
